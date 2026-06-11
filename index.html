@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sistem Cuti Babinsa - Modern</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 Icons & CSS (lightweight) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-blur"></div>
+    <div class="container main-container">
+        <!-- Login Card -->
+        <div id="loginSection" class="login-wrapper">
+            <div class="glass-card login-card">
+                <div class="text-center mb-4">
+                    <div class="icon-circle">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h2 class="mt-3 fw-bold">Sistem Cuti Babinsa</h2>
+                    <p class="text-muted">Masukkan NRP Anda untuk melanjutkan</p>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-hashtag"></i></span>
+                    <input type="text" id="nrpLogin" class="form-control form-control-lg border-start-0" placeholder="NRP (contoh: 31980669730377)">
+                </div>
+                <button id="loginBtn" class="btn btn-primary btn-lg w-100 shimmer-btn">
+                    <i class="fas fa-arrow-right-to-bracket me-2"></i> Login
+                </button>
+                <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard (setelah login) -->
+        <div id="dataSection" style="display: none;">
+            <!-- Header Modern -->
+            <div class="glass-card dashboard-header mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1 class="display-6 fw-bold"><i class="fas fa-calendar-alt me-2"></i>Permohonan Cuti</h1>
+                        <p class="text-muted mb-0">Kelola data cuti personel dengan mudah</p>
+                    </div>
+                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                        <span class="badge user-badge" id="userInfo"><i class="fas fa-user-check"></i> </span>
+                        <button id="logoutBtn" class="btn btn-outline-light ms-2"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons mb-4">
+                <button class="btn btn-primary btn-modern" data-bs-toggle="modal" data-bs-target="#cutiModal" onclick="resetForm()">
+                    <i class="fas fa-plus-circle me-2"></i>Tambah Cuti
+                </button>
+                <button id="downloadAllPdfBtn" class="btn btn-danger btn-modern">
+                    <i class="fas fa-file-pdf me-2"></i>PDF Semua
+                </button>
+                <button id="downloadTxtBtn" class="btn btn-info btn-modern">
+                    <i class="fas fa-database me-2"></i>TXT (JSON)
+                </button>
+                <button id="downloadCsvBtn" class="btn btn-success btn-modern">
+                    <i class="fas fa-file-csv me-2"></i>CSV
+                </button>
+            </div>
+
+            <!-- Table Card -->
+            <div class="glass-card table-card">
+                <div class="table-responsive">
+                    <table class="table custom-table" id="cutiTable">
+                        <thead>
+                            <tr>
+                                <th>Tanggal Surat</th><th>Nama</th><th>Pangkat</th><th>NRP</th>
+                                <th>Berangkat</th><th>Kembali</th><th>Tujuan</th><th>Keperluan</th><th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cutiBody">
+                            <tr><td colspan="9" class="text-center py-5">Belum ada data</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Cuti Modern -->
+    <div class="modal fade" id="cutiModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content glass-card modal-glass">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-pen-alt me-2"></i>Form Cuti</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cutiForm">
+                        <input type="hidden" id="editId">
+                        <div class="row g-3">
+                            <div class="col-md-4"><label class="form-label">NRP</label><input type="text" id="formNrp" class="form-control" readonly></div>
+                            <div class="col-md-4"><label class="form-label">Nama</label><input type="text" id="formNama" class="form-control" readonly></div>
+                            <div class="col-md-4"><label class="form-label">Pangkat</label><input type="text" id="formPangkat" class="form-control" readonly></div>
+                            <div class="col-md-6"><label class="form-label">Jabatan</label><input type="text" id="formJabatan" class="form-control" readonly></div>
+                            <div class="col-md-6"><label class="form-label">Kesatuan</label><input type="text" id="formKesatuan" class="form-control" readonly></div>
+                            <div class="col-md-6"><label class="form-label">Pengikut</label><input type="text" id="pengikut" class="form-control" placeholder="Keluarga / Istri / dll"></div>
+                            <div class="col-md-6"><label class="form-label">Pergi Dari</label><input type="text" id="pergi_dari" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label">Tempat Tujuan</label><input type="text" id="tempat_tujuan" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label">Keperluan</label><input type="text" id="keperluan" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label">Berkendaraan</label><input type="text" id="berkendaraan" class="form-control" required></div>
+                            <div class="col-md-4"><label class="form-label">Tanggal Surat</label><input type="date" id="tanggal_surat" class="form-control" required></div>
+                            <div class="col-md-4"><label class="form-label">Berangkat</label><input type="date" id="berangkat_tanggal" class="form-control" required></div>
+                            <div class="col-md-4"><label class="form-label">Kembali</label><input type="date" id="kembali_tanggal" class="form-control" required></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="saveCutiBtn"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
