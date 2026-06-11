@@ -1,0 +1,249 @@
+/* style.css - Modern Glassmorphism */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow-x: auto;
+    padding: 2rem 1rem;
+}
+
+.background-blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(120px);
+    z-index: -1;
+}
+
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Glass Card Effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    border-radius: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Login Card */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.login-card {
+    max-width: 480px;
+    width: 100%;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.25);
+    animation: fadeInUp 0.6s ease;
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 2.5rem;
+    color: #4a47a3;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.input-group-text {
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.form-control {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: white;
+    backdrop-filter: blur(4px);
+}
+
+.form-control:focus {
+    background: rgba(255,255,255,0.3);
+    border-color: white;
+    box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.2);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border: none;
+    border-radius: 40px;
+    padding: 12px 28px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.shimmer-btn {
+    background-size: 200% auto;
+    background-image: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #4f46e5 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 0% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.dashboard-header {
+    padding: 1.8rem 2rem;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.user-badge {
+    background: rgba(0,0,0,0.3);
+    font-size: 1rem;
+    padding: 10px 18px;
+    border-radius: 40px;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn-modern {
+    border-radius: 40px;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: 0.2s;
+    backdrop-filter: blur(4px);
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.3);
+    color: white;
+}
+
+.btn-danger.btn-modern { background: rgba(220, 53, 69, 0.8); }
+.btn-info.btn-modern { background: rgba(13, 202, 240, 0.8); }
+.btn-success.btn-modern { background: rgba(25, 135, 84, 0.8); }
+
+.table-card {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.custom-table {
+    color: white;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.custom-table thead th {
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: none;
+    padding: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+}
+
+.custom-table tbody tr {
+    background: rgba(255, 255, 255, 0.1);
+    transition: 0.2s;
+    border-radius: 16px;
+}
+
+.custom-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.01);
+}
+
+.custom-table td, .custom-table th {
+    vertical-align: middle;
+    padding: 12px;
+    border: none;
+}
+
+.btn-warning, .btn-danger, .btn-info {
+    border-radius: 30px;
+    padding: 6px 12px;
+    margin: 2px;
+    font-size: 0.8rem;
+}
+
+.modal-glass {
+    background: rgba(30, 30, 50, 0.9);
+    backdrop-filter: blur(20px);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.modal-glass .modal-header, .modal-glass .modal-footer {
+    border: none;
+}
+
+.modal-glass .btn-close-white {
+    filter: invert(1);
+}
+
+.modal-glass .form-label {
+    color: #ddd;
+    font-weight: 500;
+}
+
+.modal-glass .form-control {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header h1 { font-size: 1.6rem; }
+    .action-buttons { justify-content: center; }
+    .custom-table { font-size: 0.8rem; }
+}
