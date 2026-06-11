@@ -1,21 +1,24 @@
 // script.js
-const SUPABASE_URL = 'https://GANTI_DENGAN_URL_ANDA.supabase.co';
-const SUPABASE_ANON_KEY = 'GANTI_DENGAN_ANON_KEY_ANDA';
+// Konfigurasi Supabase (sudah diisi dengan kredensial Anda)
+const SUPABASE_URL = 'https://wbayzpkuprmbshkgtjfd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiYXp6cGt1cHJtYnNoa2d0amZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODg5MDUsImV4cCI6MjA5Njc2NDkwNX0.uE8Nj8bxaCI8w3SI3WWmUNVUD23pgt3L3hMWlBEsuCk';
+
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// State global
 let currentNrp = null;
 let currentAnggota = null;
 
-// Helper format tanggal indo
+// Helper format tanggal Indonesia
 function formatTanggal(tglISO) {
     if (!tglISO) return '';
     const date = new Date(tglISO);
     if (isNaN(date)) return tglISO;
-    const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     return `${date.getDate()} ${bulan[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-// Tampilkan notifikasi sederhana (alert diganti dengan toast style)
+// Notifikasi modern
 function showNotif(msg, isError = false) {
     const notif = document.createElement('div');
     notif.className = `alert ${isError ? 'alert-danger' : 'alert-success'} position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg`;
@@ -27,6 +30,7 @@ function showNotif(msg, isError = false) {
     setTimeout(() => notif.remove(), 2000);
 }
 
+// Ambil data cuti berdasarkan NRP yang login
 async function loadCuti() {
     if (!currentNrp) return;
     const { data, error } = await supabase
@@ -39,7 +43,7 @@ async function loadCuti() {
         return;
     }
     const tbody = document.getElementById('cutiBody');
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" class="text-center py-5">Belum ada data cuti</td></tr>';
         return;
     }
@@ -65,6 +69,7 @@ async function loadCuti() {
     });
 }
 
+// Edit cuti
 window.editCuti = async (id) => {
     const { data, error } = await supabase.from('permohonan_cuti').select('*').eq('id', id).single();
     if (error) return showNotif('Gagal ambil data edit', true);
@@ -72,8 +77,8 @@ window.editCuti = async (id) => {
     document.getElementById('formNrp').value = data.nrp;
     document.getElementById('formNama').value = data.nama;
     document.getElementById('formPangkat').value = data.pangkat;
-    document.getElementById('formJabatan').value = data.jabatan;
-    document.getElementById('formKesatuan').value = data.kesatuan;
+    document.getElementById('formJabatan').value = data.jabatan || '';
+    document.getElementById('formKesatuan').value = data.kesatuan || '';
     document.getElementById('pengikut').value = data.pengikut || '';
     document.getElementById('pergi_dari').value = data.pergi_dari;
     document.getElementById('tempat_tujuan').value = data.tempat_tujuan;
@@ -85,14 +90,16 @@ window.editCuti = async (id) => {
     new bootstrap.Modal(document.getElementById('cutiModal')).show();
 };
 
+// Hapus cuti
 window.deleteCuti = async (id) => {
-    if (confirm('Yakin menghapus data cuti ini?')) {
+    if (confirm('Yakin hapus cuti ini?')) {
         const { error } = await supabase.from('permohonan_cuti').delete().eq('id', id);
-        if (error) showNotif('Gagal hapus: '+error.message, true);
+        if (error) showNotif('Gagal hapus: ' + error.message, true);
         else { showNotif('Data berhasil dihapus'); loadCuti(); }
     }
 };
 
+// Reset form untuk tambah baru
 window.resetForm = () => {
     document.getElementById('cutiForm').reset();
     document.getElementById('editId').value = '';
@@ -103,9 +110,10 @@ window.resetForm = () => {
         document.getElementById('formJabatan').value = currentAnggota.jabatan || '';
         document.getElementById('formKesatuan').value = currentAnggota.kesatuan || '';
     }
-    document.getElementById('tanggal_surat').value = new Date().toISOString().slice(0,10);
+    document.getElementById('tanggal_surat').value = new Date().toISOString().slice(0, 10);
 };
 
+// Simpan (tambah/edit)
 document.getElementById('saveCutiBtn').onclick = async () => {
     const id = document.getElementById('editId').value;
     const dataCuti = {
@@ -124,9 +132,12 @@ document.getElementById('saveCutiBtn').onclick = async () => {
         kembali_tanggal: document.getElementById('kembali_tanggal').value
     };
     let result;
-    if (id) result = await supabase.from('permohonan_cuti').update(dataCuti).eq('id', id);
-    else result = await supabase.from('permohonan_cuti').insert([dataCuti]);
-    if (result.error) showNotif('Error: '+result.error.message, true);
+    if (id) {
+        result = await supabase.from('permohonan_cuti').update(dataCuti).eq('id', id);
+    } else {
+        result = await supabase.from('permohonan_cuti').insert([dataCuti]);
+    }
+    if (result.error) showNotif('Error: ' + result.error.message, true);
     else {
         showNotif('Data tersimpan');
         bootstrap.Modal.getInstance(document.getElementById('cutiModal')).hide();
@@ -134,7 +145,7 @@ document.getElementById('saveCutiBtn').onclick = async () => {
     }
 };
 
-// LOGIN
+// Login dengan NRP
 document.getElementById('loginBtn').onclick = async () => {
     const nrp = document.getElementById('nrpLogin').value.trim();
     const errorDiv = document.getElementById('loginError');
@@ -161,6 +172,7 @@ document.getElementById('loginBtn').onclick = async () => {
     loadCuti();
 };
 
+// Logout
 document.getElementById('logoutBtn').onclick = () => {
     localStorage.removeItem('cuti_nrp');
     localStorage.removeItem('cuti_anggota');
@@ -171,7 +183,7 @@ document.getElementById('logoutBtn').onclick = () => {
     document.getElementById('nrpLogin').value = '';
 };
 
-// Cek session
+// Cek session dari localStorage
 const storedNrp = localStorage.getItem('cuti_nrp');
 const storedAnggota = localStorage.getItem('cuti_anggota');
 if (storedNrp && storedAnggota) {
@@ -184,13 +196,14 @@ if (storedNrp && storedAnggota) {
     loadCuti();
 }
 
-// Download PDF All
+// Download PDF semua data
 document.getElementById('downloadAllPdfBtn').onclick = () => {
     const element = document.getElementById('cutiTable');
     const opt = { margin: 0.5, filename: 'laporan_cuti.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a2', orientation: 'landscape' } };
     html2pdf().set(opt).from(element).save();
 };
 
+// Download single PDF
 window.downloadSinglePdf = async (id) => {
     const { data, error } = await supabase.from('permohonan_cuti').select('*').eq('id', id).single();
     if (error) return showNotif('Gagal ambil data PDF', true);
